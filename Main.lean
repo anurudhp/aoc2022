@@ -2,22 +2,36 @@ import Init.System.IO
 import Aoc
 import Aoc.Day01 
 
-def run (sol : String → String) (inf : String) : IO Unit := do
-  let inp ← IO.FS.readFile inf
-  IO.println (sol inp)
+partial def readInput : IO String := do
+  let stdin ← IO.getStdin
+  let line ← stdin.getLine
+  if line.length == 0 then
+    return ""
+  else
+    let rest ← readInput
+    return line ++ rest
 
-def runTask (silent : Bool) (n : Int) : IO Unit :=
+def run (interactive? : Bool) (sol : String → String) (n : String)  : IO Unit := do
+  let inp ← if interactive? then readInput else IO.FS.readFile s!"inputs/day{n}.in"
+  IO.println s!"day{n}: {sol inp}"
+
+def runTask (silent? : Bool) (interactive? : Bool) (n : Int) : IO Unit :=
+  let runner := run interactive?
   match n with
-  | 1 => run Day01.main "inputs/day01.in"
+  | 1 => runner Day01.main "01"
   | _ => do
-    if not silent then
+    if not silent? then
       IO.println s!"[!] Invalid Task {n}"
 
 def main (args : List String) : IO Unit := do
   if args.isEmpty then
     IO.println "[!] Running all tasks!"
     for i in [1:26] do
-      runTask true i
+      runTask true false i
+  else if args.length == 1 then
+    runTask false false args.head!.toNat!
+  else if args.length == 2 ∧ args.get! 1 == "-i" then
+    runTask false true args.head!.toNat!
   else
-    runTask false args.head!.toNat!
+    IO.println "[!] invalid command line arguments"
 
