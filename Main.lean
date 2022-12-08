@@ -1,6 +1,7 @@
 import Aoc
 import Aoc.Day01 
 import Aoc.Day02 
+import Aoc.Day03 
 
 partial def readInput : IO String := do
   let stdin ← IO.getStdin
@@ -9,7 +10,7 @@ partial def readInput : IO String := do
     return ""
   else
     let rest ← readInput
-    return line ++ rest
+    return line ++ rest 
 
 def run (interactive? : Bool) (sol : String → String) (n : String)  : IO Unit := do
   let inp ← if interactive? then readInput else IO.FS.readFile s!"inputs/day{n}.in"
@@ -20,6 +21,7 @@ def runTask (silent? : Bool) (interactive? : Bool) (n : Int) : IO Unit :=
   match n with
   | 1 => runner Day01.main "01"
   | 2 => runner Day02.main "02"
+  | 3 => runner Day03.main "03"
   | _ => do
     if not silent? then
       IO.println s!"[!] Invalid Task {n}"

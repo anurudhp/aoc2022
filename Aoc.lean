@@ -14,3 +14,5 @@ def List.splitOn (pred : α -> Bool): List α → List (List α)
     match splitOn pred xs with
     | [] => [] -- unreachable
     | p::ps => if pred x then [] :: p :: ps else (x :: p) :: ps
+
+def uncurry (f : α → β → γ) : (α × β → γ) := λ (a, b) => f a b
