@@ -2,6 +2,7 @@ import Aoc
 import Aoc.Day01 
 import Aoc.Day02 
 import Aoc.Day03 
+import Aoc.Day04 
 
 partial def readInput : IO String := do
   let stdin ← IO.getStdin
@@ -22,6 +23,7 @@ def runTask (silent? : Bool) (interactive? : Bool) (n : Int) : IO Unit :=
   | 1 => runner Day01.main "01"
   | 2 => runner Day02.main "02"
   | 3 => runner Day03.main "03"
+  | 4 => runner Day04.main "04"
   | _ => do
     if not silent? then
       IO.println s!"[!] Invalid Task {n}"

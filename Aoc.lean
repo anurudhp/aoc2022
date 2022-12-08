@@ -2,7 +2,7 @@
 
 notation:1000 f ":>" g => g ∘ f
 
-def lines (s : String) : List String := String.splitOn s "\n"
+def lines (s : String) : List String := String.splitOn s "\n" |>.reverse |>.dropWhile String.isEmpty |>.reverse
 def words (s : String) : List String := String.split s (λ c => c == ' ' || c == '\n') 
 
 def unlines : List String -> String := String.intercalate "\n"

@@ -36,5 +36,5 @@ def part2 : List String → Int :=
   :> sum
 
 def main (input : String) : String := 
-  let input := lines input |>.dropLast
+  let input := lines input
   s!"{part1 input}, {part2 input}"
