@@ -1,5 +1,5 @@
-def sum (xs : List Int) : Int := Id.run do
-  let mut s := 0
+def sum [Add α] [Inhabited α] (xs : List α) : α := Id.run do
+  let mut s := Inhabited.default
   for x in xs do
     s := s + x
   return s
