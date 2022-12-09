@@ -28,12 +28,13 @@ def main (inp : String) : String :=
   let n := inp.length
   let m := inp.head!.length
 
-  let inp := inp.zipWith (λ row r => row.zipWith (λ cell c => (cell, r * m + c)) [:m]) [:n] 
+  let grid := inp.zipWith (λ row r => row.zipWith (λ cell c => (cell, r * m + c)) [:m]) [:n] 
 
-  let visible := check inp 
-              ++ check inp.transpose
-              ++ check (inp.map List.reverse)
-              ++ check (inp.transpose.map List.reverse)
+  let views := [grid, grid.transpose, grid.map List.reverse, grid.transpose.map List.reverse]
+
+  let visible := views 
+    |>.map check
+    |>.join
     |>.eraseDups
     |>.length
 
