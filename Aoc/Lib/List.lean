@@ -55,3 +55,10 @@ def List.transpose (l : List (List α)) : List (List α) := (l.foldr go #[]).toL
   go (l : List α) (acc : Array (List α)) : Array (List α) :=
     let (acc, l) := acc.mapM pop l
     l.foldl (init := acc) fun arr a => arr.push [a]
+
+/- O(n^2), preserves order -/
+def List.nub [BEq α] : List α → List α
+| [] => []
+| x :: xs => 
+  let xs := xs.nub
+  if xs.elem x then xs else x :: xs
