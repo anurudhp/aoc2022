@@ -29,3 +29,29 @@ def List.foldl1 (f : α → α → α) (l : List α) : Option α :=
   match l with
   | a :: as => pure $ as.foldl f a
   | _ => none
+
+def List.padRight (a : α) (n : Nat) (l : List α) :=
+  l ++ List.replicate (n - l.length) a
+
+-- https://github.com/leanprover/std4/blob/bc4c3f72b28abc028fc55ea49d827089fb7e9ef4/Std/Data/List/Basic.lean#L848-L868
+def List.transpose (l : List (List α)) : List (List α) := (l.foldr go #[]).toList where
+  /-- `pop : List α → StateM (List α) (List α)` transforms the input list `old`
+  by taking the head of the current state and pushing it on the head of `old`.
+  If the state list is empty, then `old` is left unchanged. -/
+  pop (old : List α) : StateM (List α) (List α)
+    | [] => (old, [])
+    | a :: l => (a :: old, l)
+
+  /-- `go : List α → Array (List α) → Array (List α)` handles the insertion of
+  a new list into all the lists in the array:
+  `go [a, b, c] #[l₁, l₂, l₃] = #[a::l₁, b::l₂, c::l₃]`.
+  If the new list is too short, the later lists are unchanged, and if it is too long
+  the array is extended:
+  ```
+  go [a] #[l₁, l₂, l₃] = #[a::l₁, l₂, l₃]
+  go [a, b, c, d] #[l₁, l₂, l₃] = #[a::l₁, b::l₂, c::l₃, [d]]
+  ```
+  -/
+  go (l : List α) (acc : Array (List α)) : Array (List α) :=
+    let (acc, l) := acc.mapM pop l
+    l.foldl (init := acc) fun arr a => arr.push [a]
