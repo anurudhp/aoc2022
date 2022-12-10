@@ -1,3 +1,4 @@
+-- https://github.com/leanprover/lean4/blob/fa0964c07e70bd3ad546a18d9c450c9c27d29920/tests/lean/run/mergeSortCPDT.lean
 def List.insert (p : α → α → Bool) (a : α) (bs : List α) : List α :=
   match bs with
   | [] => [a]
@@ -36,7 +37,7 @@ theorem List.length_split_of_atLeast2 {as : List α} (h : as.atLeast2) : as.spli
     have ⟨ih₁, ih₂⟩ := ih
     exact ⟨Nat.le_trans ih₁ (by simp_arith), Nat.le_trans ih₂ (by simp_arith)⟩
 
-def List.mergeSort (p : α → α → Bool) (as : List α) : List α :=
+def List.mergeSortBy (p : α → α → Bool) (as : List α) : List α :=
   if h : as.atLeast2 then
     match he:as.split with
     | (as', bs') =>
@@ -44,7 +45,9 @@ def List.mergeSort (p : α → α → Bool) (as : List α) : List α :=
       have ⟨h₁, h₂⟩ := length_split_of_atLeast2 h
       have : as'.length < as.length := by simp [he] at h₁; assumption
       have : bs'.length < as.length := by simp [he] at h₂; assumption
-      merge p (mergeSort p as') (mergeSort p bs')
+      merge p (mergeSortBy p as') (mergeSortBy p bs')
   else
     as
 termination_by _ as => as.length
+
+def List.mergeSort [Ord α] : List α → List α := mergeSortBy (λ x y => compare x y |>.isLE)

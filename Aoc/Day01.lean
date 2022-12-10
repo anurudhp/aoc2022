@@ -6,7 +6,7 @@ namespace Day01
 
 def part1 : List Int → Int := maximum 
 
-def part2 : List Int → Int := .mergeSort (λ x y => x < y) :>.reverse :>.take 3 :> sum
+def part2 : List Int → Int := .mergeSort :>.reverse :>.take 3 :> sum
 
 def main (input : String) : String := 
   let input :=
