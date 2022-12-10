@@ -30,43 +30,47 @@ def Pos.dist_inf : Pos → Pos → Nat
 def Pos.dist₁ : Pos → Pos → Nat
 | (x₁, y₁), (x₂, y₂) => (x₁ - x₂).natAbs + (y₁ - y₂).natAbs
 
-def Part := Pos × List Pos -- current, history
+@[reducible] def Part := Pos × List Pos -- current, history
 
 def Part.advance : Part → Dir → Part
 | (pos, hist), dir =>
   let pos := pos.advance dir
   (pos, pos :: hist)
 
-def State := Part × Part -- head, tail
+@[reducible] def Snake := List Part
 
-def init : State :=
+def init (len : Nat) : Snake :=
   let s := (0, 0)
   let p := (s, [s])
-  (p, p)
+  .replicate len p
 
-def moveOnce : State → Dir → State 
-| (hd, tl), dir => Id.run do
-  let hd := hd.advance dir
-  let dis := hd.fst.dist_inf tl.fst
-  let mut tl' := tl
-  if dis == 2 then
-    for cand in ["L", "R", "U", "D", "LU", "LD", "RU", "RD"].map (tl.advance) do
-      if hd.fst.dist₁ cand.fst < hd.fst.dist₁ tl'.fst then
-        tl' := cand
-  (hd, tl')
+def Snake.moveOnce : Snake → Dir → Snake 
+| snake, dir => Id.run do
+  let mut hd := snake.head!.advance (dir ++ dir) -- fake head to pull the real head
+  let mut snake' := []
+  for pt in snake do
+    let dis := hd.fst.dist_inf pt.fst
+    let mut pt' := pt
+    if dis == 2 then
+      for cand in ["L", "R", "U", "D", "LU", "LD", "RU", "RD"].map (pt.advance) do
+        if hd.fst.dist₁ cand.fst < hd.fst.dist₁ pt'.fst then
+          pt' := cand
+    snake' := pt' :: snake'
+    hd := pt'
+  snake'.reverse
 
-def State.applyMove (s : State) : Move →  State
+def Snake.applyMove (s : Snake) : Move → Snake
 | (_, 0) => s
-| (dir, n+1) => moveOnce s dir |>.applyMove (dir, n)
+| (dir, n+1) => s.moveOnce dir |>.applyMove (dir, n)
 
 def main (inp : String) : String :=
   let inp := inp |> lines |>.map mkMove
 
-  let tailSeen := inp
-    |>.foldl .applyMove init
-    |>.snd -- tail
+  let tailSeen (len : Nat) := inp
+    |>.foldl .applyMove (init len)
+    |>.getLast! -- tail
     |>.snd -- history
     |>.eraseDups 
     |>.length
 
-  s!"{tailSeen}"
+  s!"{tailSeen 2}, {tailSeen 10}"
