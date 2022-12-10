@@ -8,6 +8,7 @@ import Aoc.Day06
 import Aoc.Day07
 import Aoc.Day08
 import Aoc.Day09
+import Aoc.Day10
 
 partial def readInput : IO String := do
   let stdin ← IO.getStdin
@@ -25,16 +26,17 @@ def run (interactive? : Bool) (sol : String → String) (n : String)  : IO Unit 
 def runTask (silent? : Bool) (interactive? : Bool) (n : Int) : IO Unit :=
   let runner := run interactive?
   match n with
-  | 1 => runner Day01.main "01"
-  | 2 => runner Day02.main "02"
-  | 3 => runner Day03.main "03"
-  | 4 => runner Day04.main "04"
-  | 5 => runner Day05.main "05"
-  | 6 => runner Day06.main "06"
-  | 7 => runner Day07.main "07"
-  | 8 => runner Day08.main "08"
-  | 9 => runner Day09.main "09"
-  | _ => do
+  | 1  => runner Day01.main "01"
+  | 2  => runner Day02.main "02"
+  | 3  => runner Day03.main "03"
+  | 4  => runner Day04.main "04"
+  | 5  => runner Day05.main "05"
+  | 6  => runner Day06.main "06"
+  | 7  => runner Day07.main "07"
+  | 8  => runner Day08.main "08"
+  | 9  => runner Day09.main "09"
+  | 10 => runner Day10.main "10"
+  | _  => do
     if not silent? then
       IO.println s!"[!] Invalid Task {n}"
 
