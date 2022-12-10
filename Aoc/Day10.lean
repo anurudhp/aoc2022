@@ -29,7 +29,16 @@ def main (inp : String) : String :=
    |>.map parseCommand
    |>.foldl Command.run init
    |>.reverse
+   |>.toArray
   
-  let part1 := [20, 60, 100, 140, 180, 220].map (λ i => i * hist.get! i) |> sum
+  let strength := [20, 60, 100, 140, 180, 220].map (λ i => i * hist.get! i) |> sum
 
-  s!"{part1}"
+  let drawing := Id.run do
+    let sz := 6 * 40
+    let mut screen := List.replicate sz '.'
+    for i in [0:hist.size - 1] do
+      let val := if (hist.get! (i + 1) - i.mod 40).natAbs <= 1 then '#' else '.'
+      screen := screen.set (i.mod sz) val
+    return screen.toChunks 40 |>.map (String.mk) |> unlines
+
+  s!"{strength}\n{drawing}"
