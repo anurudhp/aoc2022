@@ -1,4 +1,5 @@
 import Aoc
+import Aoc.Lib.Nat
 import Aoc.Lib.List
 import Aoc.Lib.Array
 import Aoc.Lib.Mergesort
@@ -17,6 +18,9 @@ def Monkey.items : Monkey → List Nat
 
 def Monkey.inspectCount : Monkey → Nat
 | M _ _ _ _ _ cnt => cnt
+
+def Monkey.getMod : Monkey → Nat
+| M _ tst _ _ _ _ => tst
 
 def Monkey.test : Monkey → Nat → Nat
 | M _ tst tru fls _ _, it => if it.mod tst == 0 then tru else fls
@@ -68,13 +72,14 @@ def parseMonkey (ws : List String) : Monkey :=
 
   Monkey.M op tst tru fls items 0
 
-def runRound (monkeys : Array Monkey) : Array Monkey := Id.run do
+def runRound (relax : Bool) (mod : Nat) (monkeys : Array Monkey) : Array Monkey := Id.run do
   let n := monkeys.size
   let mut ms := monkeys
   for ix in [:n] do
     let m := ms.get! ix
     for it in m.items do
-      let it := m.inspect it |>.div 3
+      let it := m.inspect it
+      let it := if relax then it.div 3 else it.mod mod
       let targ := it |> m.test
       ms := ms.upd! targ (.add it)
     ms := ms.upd! ix .clear
@@ -87,10 +92,12 @@ def main (inp : String) : String :=
     |>.map parseMonkey
     |>.toArray
 
-  let monkeybusiness := Id.run do
+  let mod := monkeys.map Monkey.getMod |>.foldl Nat.lcm 1
+
+  let monkeybusiness (relax : Bool) (nr : Nat):= Id.run do
     let mut ms := monkeys
-    for _ in [:20] do
-      ms := runRound ms
+    for _ in [:nr] do
+      ms := runRound relax mod ms
     ms.map Monkey.inspectCount
       |>.toList
       |>.mergeSort
@@ -98,4 +105,4 @@ def main (inp : String) : String :=
       |>.take 2
       |>.foldl Nat.mul 1
 
-  s!"{monkeybusiness}"
+  s!"{monkeybusiness true 20} {monkeybusiness false 10000}"
