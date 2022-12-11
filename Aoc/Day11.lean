@@ -1,9 +1,7 @@
 import Aoc
 import Aoc.Lib.List
+import Aoc.Lib.Array
 import Aoc.Lib.Mergesort
-
-def Array.upd! [Inhabited α] (ix : Nat) (f : α → α) (as : Array α) : Array α :=
-  as.set! ix (f (as.get! ix))
 
 namespace Day11
 
