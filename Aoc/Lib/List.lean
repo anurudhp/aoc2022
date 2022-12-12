@@ -7,6 +7,14 @@ def List.splitAt (n : Nat) (l : List α) : List α × List α := go l n #[] wher
   | x :: xs, n+1, acc => go xs n (acc.push x)
   | xs, _, acc => (acc.toList, xs)
 
+def List.splitOn (pred : α -> Bool) (l: List α) : List (List α) := go l where
+  go : List α → List (List α)
+  | [] => [[]]
+  | x::xs =>
+    match go xs with
+    | [] => [] -- unreachable
+    | p::ps => if pred x then [] :: p :: ps else (x :: p) :: ps
+
 -- https://github.com/leanprover/std4/blob/bc4c3f72b28abc028fc55ea49d827089fb7e9ef4/Std/Data/List/Basic.lean#L1452-L1467
 def List.toChunks {α} : Nat → List α → List (List α)
   | _, [] => []
@@ -25,10 +33,9 @@ def List.toChunks {α} : Nat → List α → List (List α)
         go xs (acc₁.push x) acc₂
     go xs #[x] #[]
   
-def List.foldl1 (f : α → α → α) (l : List α) : Option α :=
-  match l with
-  | a :: as => pure $ as.foldl f a
-  | _ => none
+def List.foldl1 (f : α → α → α) : List α → Option α
+| a :: as => some $ as.foldl f a
+| _ => none
 
 def List.padRight (a : α) (n : Nat) (l : List α) :=
   l ++ List.replicate (n - l.length) a
@@ -55,10 +62,3 @@ def List.transpose (l : List (List α)) : List (List α) := (l.foldr go #[]).toL
   go (l : List α) (acc : Array (List α)) : Array (List α) :=
     let (acc, l) := acc.mapM pop l
     l.foldl (init := acc) fun arr a => arr.push [a]
-
-def List.splitOn (pred : α -> Bool): List α → List (List α)
-  | [] => [[]]
-  | x::xs =>
-    match splitOn pred xs with
-    | [] => [] -- unreachable
-    | p::ps => if pred x then [] :: p :: ps else (x :: p) :: ps
