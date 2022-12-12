@@ -2,8 +2,6 @@ import Aoc
 import Aoc.Lib.List
 import Aoc.Lib.Mergesort
 
-namespace Day08
-
 def rangeToList (r : Std.Range) : List Nat := Id.run do
   let mut xs := []
   for i in r do
@@ -38,8 +36,8 @@ def calcDist (row : Row) : Row := Id.run do
     i := i + 1
   return ans
 
-def main (inp : String) : String :=
-  let inp := lines inp |>.map (String.data :> List.map (λ c => c.toNat - '0'.toNat))
+def main : IO Unit := IO.interact $ λ input =>
+  let inp := lines input |>.map (String.data :> List.map (λ c => c.toNat - '0'.toNat))
   let n := inp.length
   let m := inp.head!.length
 

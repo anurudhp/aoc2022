@@ -1,8 +1,6 @@
 import Aoc
 import Aoc.Lib.List
 
-namespace Day05
-
 @[reducible] def Stack := List Char
 inductive Move := | Move (num src dst : Nat) deriving Inhabited
 @[reducible] def Input := List Stack × List Move
@@ -33,9 +31,9 @@ def move (rev : Bool) (ss : List Stack) (m : Move) : List Stack :=
   let hs := (if rev then hs.reverse else hs) ++ ss.get! dst
   ss |>.set src ts |>.set dst hs 
 
-def solve (rev : Bool) : Input → String 
+def compute (rev : Bool) : Input → String 
 | (stacks, moves) => moves.foldl (move rev) stacks |>.map List.head! |> String.mk
 
-def main (inp : String) : String := 
-  let inp := parseInput inp
-  s!"{solve true inp}, {solve false inp}"
+def main : IO Unit := IO.interact $ λ input =>
+  let inp := parseInput input
+  s!"{compute true inp}, {compute false inp}"

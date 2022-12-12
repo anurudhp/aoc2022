@@ -4,8 +4,6 @@ import Aoc.Lib.List
 import Aoc.Lib.Array
 import Aoc.Lib.Mergesort
 
-namespace Day11
-
 inductive Monkey := 
 | M (op : Nat → Nat) (tst tru fls : Nat) (items : List Nat) (cnt : Nat)
 deriving Inhabited
@@ -33,11 +31,11 @@ def Monkey.clear : Monkey → Monkey
 
 def parseMonkey (ws : List String) : Monkey :=
   -- "Monkey <ix>:"
-  let ix := ws.get! 0
-    |>.splitOn " "
-    |>.get! 1
-    |>.dropRight 1
-    |>.toNat!
+  -- let ix := ws.get! 0
+  --   |>.splitOn " "
+  --   |>.get! 1
+  --   |>.dropRight 1
+  --   |>.toNat!
 
   -- "Starting items: <a_1, a_2, ..., a_n>"
   let items := ws.get! 1
@@ -85,8 +83,8 @@ def runRound (relax : Bool) (mod : Nat) (monkeys : Array Monkey) : Array Monkey 
     ms := ms.upd! ix .clear
   ms
 
-def main (inp : String) : String :=
-  let monkeys := lines inp
+def main : IO Unit := IO.interact $ λ input =>
+  let monkeys := lines input
     |>.map .trim
     |>.toChunks 7
     |>.map parseMonkey
@@ -105,4 +103,4 @@ def main (inp : String) : String :=
       |>.take 2
       |>.foldl Nat.mul 1
 
-  s!"{monkeybusiness true 20} {monkeybusiness false 10000}"
+  s!"{monkeybusiness true 20}, {monkeybusiness false 10000}"

@@ -1,3 +1,4 @@
+import Aoc.Lib.IO
 -- Helpers
 
 notation:1000 f ":>" g => g ∘ f

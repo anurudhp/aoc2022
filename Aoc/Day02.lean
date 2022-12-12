@@ -1,8 +1,6 @@
 import Aoc
 import Aoc.Lib.IntList
 
-namespace Day02 
-
 inductive Move := | R | P | S deriving BEq 
 
 def readMove : String → Option Move
@@ -53,7 +51,7 @@ def conv2 : Round → Play
   | (o, .Y) => (o, o)
   | (o, .Z) => (o, o.weakness)
 
-def solve (conv : Round → Play) (rounds : List Round) : Int :=
+def compute (conv : Round → Play) (rounds : List Round) : Int :=
   rounds |>.map conv |>.map score |> sum
 
 def collect (l : List (Option α)) : List α :=
@@ -62,6 +60,6 @@ def collect (l : List (Option α)) : List α :=
   | (some x)::xs => x :: collect xs
   | none::xs => collect xs
 
-def main (input : String) : String := 
+def main : IO Unit := IO.interact $ λ input =>
   let rounds := input |> lines |>.map mkRound |> collect
-  s!"{solve conv1 rounds}, {solve conv2 rounds}"
+  s!"{compute conv1 rounds}, {compute conv2 rounds}"

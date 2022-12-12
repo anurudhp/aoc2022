@@ -2,8 +2,6 @@ import Aoc
 import Aoc.Lib.List
 import Aoc.Lib.IntList
 
-namespace Day07
-
 @[reducible] def Dir := List String
 
 inductive Folder :=
@@ -77,8 +75,8 @@ partial def FSTree.part2 (req : Nat) : FSTree → Nat
   sub.map (FSTree.part2 req) |>.foldl min cur
 | _ => inf
 
-def main (inp : String) : String :=
-  let fs := inp
+def main : IO Unit := IO.interact $ λ input =>
+  let fs := input
     |>.splitOn "$"
     |>.drop 1
     |>.map String.trim

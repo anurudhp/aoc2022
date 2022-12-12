@@ -3,3 +3,4 @@
 !/lean_packages/manifest.json
 *.in
 tmp/
+run.sh

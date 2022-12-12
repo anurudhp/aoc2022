@@ -1,7 +1,5 @@
 import Aoc
 
-namespace Day09
-
 @[reducible] def Dir := String
 @[reducible] def Move := Dir × Nat
 
@@ -63,8 +61,8 @@ def Snake.applyMove (s : Snake) : Move → Snake
 | (_, 0) => s
 | (dir, n+1) => s.moveOnce dir |>.applyMove (dir, n)
 
-def main (inp : String) : String :=
-  let inp := inp |> lines |>.map mkMove
+def main : IO Unit := IO.interact $ λ input =>
+  let inp := input |> lines |>.map mkMove
 
   let tailSeen (len : Nat) := inp
     |>.foldl .applyMove (init len)

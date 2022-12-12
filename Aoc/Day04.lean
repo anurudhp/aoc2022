@@ -1,7 +1,5 @@
 import Aoc
 
-namespace Day04
-
 def Elf := Nat × Nat deriving Inhabited
 def ElfPair := Elf × Elf deriving Inhabited
 
@@ -30,6 +28,6 @@ def fullOverlap : ElfPair → Bool
 def overlap : ElfPair → Bool
 | ((la, ra), (lb, rb)) => ra >= lb && rb >= la
 
-def main (inp : String) : String := 
-  let elves := inp |> lines |>.map mkInput
+def main : IO Unit := IO.interact $ λ input =>
+  let elves := input |> lines |>.map mkInput
   s!"{check fullOverlap elves}, {check overlap elves}"

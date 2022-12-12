@@ -2,8 +2,6 @@ import Aoc
 import Aoc.Lib.List
 import Aoc.Lib.IntList
 
-namespace Day10
-
 inductive Command :=
 | Noop
 | AddX (v : Int)
@@ -24,8 +22,8 @@ def Command.run (xs : Hist) : Command →  Hist
   where
     x := xs.head!
 
-def main (inp : String) : String :=
-  let hist := lines inp 
+def main : IO Unit := IO.interact $ λ input =>
+  let hist := lines input 
    |>.map parseCommand
    |>.foldl Command.run init
    |>.reverse

@@ -2,8 +2,6 @@ import Aoc
 import Aoc.Lib.IntList
 import Aoc.Lib.List
 
-namespace Day03 
-
 def RuckSack := List Char × List Char
 
 def mkRuckSack (s : String) : RuckSack := s.data.splitAt (s.length / 2)
@@ -35,6 +33,6 @@ def part2 : List String → Int :=
            :> priority)
   :> sum
 
-def main (input : String) : String := 
+def main : IO Unit := IO.interact $ λ input =>
   let input := lines input
   s!"{part1 input}, {part2 input}"
