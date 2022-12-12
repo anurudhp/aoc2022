@@ -7,14 +7,15 @@ def Pos := Nat × Nat
 @[reducible]
 def Grid := List String
 
-def Grid.locate (grid : Grid) (c : Char) : Option Pos := do
+def Grid.locateAll (grid : Grid) (c : Char) : List Pos := Id.run do
   let mut i := 0
+  let mut res := []
   for row in grid do
     let j := row.find (BEq.beq c) |>.byteIdx
     if j != row.length then
-      return (i, j)
+      res := (i, j) :: res
     i := i + 1
-  none
+  res
 
 def Grid.at (grid : Grid) : Pos → Nat
 | (x, y) => grid
@@ -56,7 +57,10 @@ def bfs (grid : Grid) (s e : Pos) : Nat := Option.get! do
 def main : IO Unit := IO.interact $ λ input =>
   let grid : Grid := lines input 
 
-  let s := grid.locate 'S' |>.get!
-  let e := grid.locate 'E' |>.get!
+  let s := grid.locateAll 'S' |>.head!
+  let e := grid.locateAll 'E' |>.head!
+  let as := s :: grid.locateAll 'a'
 
-  s!"{bfs grid s e}"
+  let dis u := bfs grid u e
+
+  s!"{dis s}, {as.map dis |>.minimum? |>.get!}"
