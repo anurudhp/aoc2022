@@ -1,4 +1,3 @@
--- TODO: fix
 import Aoc
 import Aoc.Lib.List
 import Aoc.Lib.Mergesort
