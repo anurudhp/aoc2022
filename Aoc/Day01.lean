@@ -1,4 +1,5 @@
 import Aoc
+import Aoc.Lib.List
 import Aoc.Lib.Mergesort
 
 def part1 (xs : List Int) : Int := xs.foldl max 0 

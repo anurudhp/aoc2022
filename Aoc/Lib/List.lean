@@ -55,3 +55,10 @@ def List.transpose (l : List (List α)) : List (List α) := (l.foldr go #[]).toL
   go (l : List α) (acc : Array (List α)) : Array (List α) :=
     let (acc, l) := acc.mapM pop l
     l.foldl (init := acc) fun arr a => arr.push [a]
+
+def List.splitOn (pred : α -> Bool): List α → List (List α)
+  | [] => [[]]
+  | x::xs =>
+    match splitOn pred xs with
+    | [] => [] -- unreachable
+    | p::ps => if pred x then [] :: p :: ps else (x :: p) :: ps
