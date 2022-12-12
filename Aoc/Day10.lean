@@ -1,6 +1,5 @@
 import Aoc
 import Aoc.Lib.List
-import Aoc.Lib.IntList
 
 inductive Command :=
 | Noop
@@ -29,7 +28,7 @@ def main : IO Unit := IO.interact $ λ input =>
    |>.reverse
    |>.toArray
   
-  let strength := [20, 60, 100, 140, 180, 220].map (λ i => i * hist.get! i) |> sum
+  let strength := [20, 60, 100, 140, 180, 220].map (λ i => i * hist.get! i) |>.foldl Int.add 0
 
   let drawing := Id.run do
     let sz := 6 * 40

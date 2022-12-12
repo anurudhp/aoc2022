@@ -1,6 +1,5 @@
 import Aoc
 import Aoc.Lib.List
-import Aoc.Lib.IntList
 
 @[reducible] def Dir := List String
 
@@ -60,11 +59,11 @@ partial def buildTree (ls : List (Dir × Folder)) (dir : Dir) : FSTree :=
   let (Folder.Folder files dirs) := ls.lookup dir |>.get!
   let files := files.map (uncurry FSTree.Leaf)
   let dirs := dirs.map (buildTree ls)
-  let total := files ++ dirs |>.map FSTree.size |> sum
+  let total := files ++ dirs |>.map FSTree.size |>.foldl Nat.add 0
   FSTree.Node (dir.head? |>.getD "") total dirs 
 
 partial def FSTree.part1 : FSTree → Nat
-| Node _ sz sub => (if sz <= 100000 then sz else 0) + sum (sub.map part1)
+| Node _ sz sub => (if sz <= 100000 then sz else 0) + (sub.map part1).foldl Nat.add 0
 | _ => 0
 
 def inf : Nat := 70000001

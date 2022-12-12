@@ -1,15 +1,14 @@
 import Aoc
-import Aoc.Lib.IO
 import Aoc.Lib.Mergesort
-import Aoc.Lib.IntList
 
-def part1 : List Int → Int := maximum 
+def part1 (xs : List Int) : Int := xs.foldl max 0 
 
-def part2 : List Int → Int := .mergeSort :>.reverse :>.take 3 :> sum
+def part2 (xs : List Int) : Int := xs.mergeSort |>.reverse |>.take 3 |>.foldl Int.add 0 
 
 def main : IO Unit := IO.interact $ λ input =>
   let input :=
     lines input
       |>.splitOn (λ l => l == "") 
-      |>.map (.map String.toInt! :> sum)
+      |>.map (List.map String.toInt!)
+      |>.map (List.foldl Int.add 0)
   s!"{part1 input}, {part2 input}"

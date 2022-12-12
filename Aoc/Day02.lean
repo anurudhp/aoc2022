@@ -1,5 +1,4 @@
 import Aoc
-import Aoc.Lib.IntList
 
 inductive Move := | R | P | S deriving BEq 
 
@@ -52,7 +51,7 @@ def conv2 : Round → Play
   | (o, .Z) => (o, o.weakness)
 
 def compute (conv : Round → Play) (rounds : List Round) : Int :=
-  rounds |>.map conv |>.map score |> sum
+  rounds |>.map conv |>.map score |>.foldl Int.add 0
 
 def collect (l : List (Option α)) : List α :=
   match l with
