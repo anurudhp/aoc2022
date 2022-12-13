@@ -2,14 +2,6 @@ import Aoc
 import Aoc.Lib.List
 import Aoc.Lib.Mergesort
 
-def rangeToList (r : Std.Range) : List Nat := Id.run do
-  let mut xs := []
-  for i in r do
-    xs := i :: xs
-  xs.reverse
-
-instance : Coe Std.Range (List Nat) := ⟨rangeToList⟩
-
 @[reducible] def Cell := Nat × Nat 
 @[reducible] def Row := List Cell
 @[reducible] def Grid := List Row
@@ -41,7 +33,7 @@ def main : IO Unit := IO.interact $ λ input =>
   let n := inp.length
   let m := inp.head!.length
 
-  let grid := inp.zipWith (λ row r => row.zipWith (λ cell c => (cell, r * m + c)) [:m]) [:n] 
+  let grid := inp.zipWith (λ row r => row.zipWith (λ cell c => (cell, r * m + c)) (.range m)) (.range n)
 
   let views := [grid, grid.transpose, grid.map List.reverse, grid.transpose.map List.reverse]
 
