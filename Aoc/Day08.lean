@@ -6,7 +6,7 @@ import Aoc.Lib.Mergesort
 @[reducible] def Row := List Cell
 @[reducible] def Grid := List Row
 
-def applyRowWise (f : Row → List α) (g : Grid) : List α := g.map f |>.join
+def List.mapJoin (f : α → List β) (g : List α) : List β := g.map f |>.join
 
 -- part 1
 def checkRow (lim : Nat) : Row → List Nat
@@ -35,21 +35,19 @@ def main : IO Unit := IO.interact $ λ input =>
 
   let grid := inp.zipWith (λ row r => row.zipWith (λ cell c => (cell, r * m + c)) (.range m)) (.range n)
 
-  let views := [grid, grid.transpose, grid.map List.reverse, grid.transpose.map List.reverse]
+  let views := [grid, grid.transpose, grid.map .reverse, grid.transpose.map .reverse]
 
-  let visible := views 
-    |>.map (applyRowWise (checkRow 0))
-    |>.join
+  let visible := views
+    |>.mapJoin (.mapJoin (checkRow 0))
     |>.eraseDups
     |>.length
 
   let bestScenic := views
-    |>.map (applyRowWise calcDist)
-    |>.join
+    |>.mapJoin (.mapJoin calcDist)
     |>.mergeSortBy (λ (i, _) (j, _) => i < j)
     |>.groupBy (λ (i, _) (j, _) => i == j)
-    |>.map (List.map Prod.snd)
-    |>.map (List.foldl Nat.mul 1)
+    |>.map (.map Prod.snd)
+    |>.map (List.foldl .mul 1)
     |>.foldl Nat.max 0
 
   s!"{visible}, {bestScenic}"
