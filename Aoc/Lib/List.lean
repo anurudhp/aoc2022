@@ -62,3 +62,9 @@ def List.transpose (l : List (List α)) : List (List α) := (l.foldr go #[]).toL
   go (l : List α) (acc : Array (List α)) : Array (List α) :=
     let (acc, l) := acc.mapM pop l
     l.foldl (init := acc) fun arr a => arr.push [a]
+
+def List.catOptions : List (Option α) → List α
+| [] => []
+| x :: xs => 
+  let xs := xs.catOptions
+  if let some v := x then v :: xs else xs
