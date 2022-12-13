@@ -5,7 +5,7 @@ def ElfPair := Elf × Elf deriving Inhabited
 
 def first2 [Inhabited α] (l : List α) : α × α := Option.get! $
   match l with
-  | [x, y] => some (x, y) 
+  | [x, y] => some (x, y)
   | _ => none
 
 def mkElf (s : String) : Elf :=
@@ -14,7 +14,7 @@ def mkElf (s : String) : Elf :=
 def mkInput (s : String) : ElfPair :=
   s.splitOn "," |> .map mkElf |> first2
 
-def check (p : ElfPair → Bool) : List ElfPair → Nat :=
+def count (p : ElfPair → Bool) : List ElfPair → Nat :=
   .filter p :> List.length
 
 -- part1
@@ -30,4 +30,4 @@ def overlap : ElfPair → Bool
 
 def main : IO Unit := IO.interact $ λ input =>
   let elves := input |> lines |>.map mkInput
-  s!"{check fullOverlap elves}, {check overlap elves}"
+  s!"{count fullOverlap elves}, {count overlap elves}"

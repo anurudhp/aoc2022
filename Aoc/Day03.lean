@@ -21,7 +21,7 @@ def part1 (xs : List String) : Int :=
           :> uncurry common
           :> List.head!
           :> priority)
-  |>.foldl Int.add 0
+  |>.foldl .add 0
 
 def part2 (xs : List String) : Int :=
   xs.map String.data
@@ -30,7 +30,7 @@ def part2 (xs : List String) : Int :=
           :> Option.get!
           :> List.head!
           :> priority)
-  |>.foldl Int.add 0
+  |>.foldl .add 0
 
 def main : IO Unit := IO.interact $ λ input =>
   let input := lines input
