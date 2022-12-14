@@ -1,7 +1,7 @@
 import Aoc
 
-def Elf := Nat × Nat deriving Inhabited
-def ElfPair := Elf × Elf deriving Inhabited
+abbrev Elf := Nat × Nat
+abbrev ElfPair := Elf × Elf
 
 def first2 [Inhabited α] (l : List α) : α × α := Option.get! $
   match l with

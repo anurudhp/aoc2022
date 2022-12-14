@@ -1,7 +1,7 @@
 import Aoc
 import Aoc.Lib.List
 
-@[reducible] def Dir := List String
+abbrev Dir := List String
 
 inductive Folder :=
 | Folder (files : List (String × Nat)) (dirs : List Dir)

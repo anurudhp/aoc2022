@@ -1,13 +1,13 @@
 import Aoc
 
-@[reducible] def Dir := String
-@[reducible] def Move := Dir × Nat
+abbrev Dir := String
+abbrev Move := Dir × Nat
 
 def mkMove (ws : String) : Move := 
   let ws := words ws
   (ws.head!, ws.get! 1 |>.toNat!)
 
-@[reducible] def Pos := Int × Int -- x, y
+abbrev Pos := Int × Int -- x, y
 
 def Pos.advance₁ : Pos → Char → Pos
 | (x, y), 'U' => (x + 1, y)
@@ -28,14 +28,14 @@ def Pos.dist_inf : Pos → Pos → Nat
 def Pos.dist₁ : Pos → Pos → Nat
 | (x₁, y₁), (x₂, y₂) => (x₁ - x₂).natAbs + (y₁ - y₂).natAbs
 
-@[reducible] def Part := Pos × List Pos -- current, history
+abbrev Part := Pos × List Pos -- current, history
 
 def Part.advance : Part → Dir → Part
 | (pos, hist), dir =>
   let pos := pos.advance dir
   (pos, pos :: hist)
 
-@[reducible] def Snake := List Part
+abbrev Snake := List Part
 
 def init (len : Nat) : Snake :=
   let s := (0, 0)

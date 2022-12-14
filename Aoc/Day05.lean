@@ -1,9 +1,9 @@
 import Aoc
 import Aoc.Lib.List
 
-@[reducible] def Stack := List Char
+abbrev Stack := List Char
 inductive Move := | Move (num src dst : Nat) deriving Inhabited
-@[reducible] def Input := List Stack × List Move
+abbrev Input := List Stack × List Move
 
 def parseInput (inp : String) : Input := 
   let data := inp |> lines |>.splitOn (String.isEmpty) 

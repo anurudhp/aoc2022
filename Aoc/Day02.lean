@@ -32,8 +32,8 @@ def readStrat : String → Option Strat
   | "Z" => pure Strat.Z
   | _ => none
 
-def Round := Move × Strat
-def Play := Move × Move
+abbrev Round := Move × Strat
+abbrev Play := Move × Move
 
 def mkRound (line : String) : Option Round := do
   let ws := words line

@@ -1,7 +1,7 @@
 import Aoc
 import Aoc.Lib.List
 
-def RuckSack := List Char × List Char
+abbrev RuckSack := List Char × List Char
 
 def mkRuckSack (s : String) : RuckSack := s.data.splitAt (s.length / 2)
 

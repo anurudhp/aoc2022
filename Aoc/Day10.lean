@@ -11,7 +11,7 @@ def parseCommand (s : String) : Command :=
   else
     Command.Noop
 
-def Hist := List Int
+abbrev Hist := List Int
 
 def init : Hist := [1, 1]
 

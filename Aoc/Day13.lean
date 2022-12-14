@@ -78,8 +78,7 @@ def parsePacket (s : String) : Option Packet := go [] s.data where
     go (.Num v :: stk) cs
   
 
-@[reducible]
-def PackPair := Packet × Packet
+abbrev PackPair := Packet × Packet
 
 def PackPair.ble : PackPair → Bool
 | (p, q) => compare p q |>.isLE

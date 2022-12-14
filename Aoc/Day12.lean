@@ -1,11 +1,8 @@
 import Aoc
 import Aoc.Lib.Queue
 
-@[reducible]
-def Pos := Nat × Nat
-
-@[reducible]
-def Grid := List String
+abbrev Pos := Nat × Nat
+abbrev Grid := List String
 
 def Grid.locateAll (grid : Grid) (c : Char) : List Pos := Id.run do
   let mut i := 0

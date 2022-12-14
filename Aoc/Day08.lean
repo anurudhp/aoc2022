@@ -2,9 +2,9 @@ import Aoc
 import Aoc.Lib.List
 import Aoc.Lib.Mergesort
 
-@[reducible] def Cell := Nat × Nat 
-@[reducible] def Row := List Cell
-@[reducible] def Grid := List Row
+abbrev Cell := Nat × Nat 
+abbrev Row := List Cell
+abbrev Grid := List Row
 
 def List.mapJoin (f : α → List β) (g : List α) : List β := g.map f |>.join
 
