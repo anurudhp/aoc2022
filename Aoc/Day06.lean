@@ -9,5 +9,6 @@ def findMarker (l : Nat) (s : List Char) : Nat :=
 
 def main : IO Unit := IO.interact $ λ input =>
   let inp := input.trim.data
-  s!"{findMarker 4 inp}, {findMarker 14 inp}"
+  let sol := (findMarker · inp)
+  s!"{sol 4}, {sol 14}"
 
