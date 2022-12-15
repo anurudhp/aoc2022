@@ -13,7 +13,7 @@ def parseInput (inp : String) : Input :=
     | [_, '[', c, ']'] => [c]
     | _ => [] 
   let readRow (row : List Char) : List (List Char) := ' ' :: row |>.toChunks 4 |>.map extract |>.padRight [] nStacks
-  let stacks := data.get! 0 |>.dropLast |>.map (String.data :> readRow) |>.transpose |>.map List.join
+  let stacks := data.get! 0 |>.dropLast |>.map (·.data |> readRow) |>.transpose |>.map .join
 
   let readMove m := Option.get! $
     match words m with

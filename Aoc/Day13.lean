@@ -102,7 +102,7 @@ def main : IO Unit := IO.interact $ λ input =>
   -- part 1
   let correct := pairs
     |>.zip ixs
-    |>.filter (Prod.fst :> PackPair.ble)
+    |>.filter (·.fst |>.ble)
     |>.map Prod.snd
     |>.foldl .add 0
 

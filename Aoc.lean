@@ -1,7 +1,6 @@
 import Aoc.Lib.IO
--- Helpers
 
-notation:1000 f ":>" g => g ∘ f
+-- Basic Helpers
 
 def lines (s : String) : List String := String.splitOn s "\n" |>.reverse |>.dropWhile String.isEmpty |>.reverse
 def words (s : String) : List String := s.split Char.isWhitespace |>.filter (not ∘ String.isEmpty)

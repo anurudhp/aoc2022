@@ -29,7 +29,7 @@ def calcDist (row : Row) : Row := Id.run do
   return ans
 
 def main : IO Unit := IO.interact $ λ input =>
-  let inp := lines input |>.map (String.data :> List.map (λ c => c.toNat - '0'.toNat))
+  let inp := lines input |>.map (·.data |>.map (λ c => c.toNat - '0'.toNat))
   let n := inp.length
   let m := inp.head!.length
 

@@ -17,19 +17,19 @@ def common [BEq α] (xs ys : List α) : List α :=
     if ys.elem x then x :: rs else rs 
 
 def part1 (xs : List String) : Int :=
-  xs.map (mkRuckSack
-          :> uncurry common
-          :> List.head!
-          :> priority)
+  xs.map (·|> mkRuckSack
+           |> uncurry common
+           |>.head!
+           |> priority)
   |>.foldl .add 0
 
 def part2 (xs : List String) : Int :=
   xs.map String.data
   |>.toChunks 3
-  |>.map (List.foldl1 common
-          :> Option.get!
-          :> List.head!
-          :> priority)
+  |>.map (·.foldl1 common
+         |>.get!
+         |>.head!
+         |> priority)
   |>.foldl .add 0
 
 def main : IO Unit := IO.interact $ λ input =>
