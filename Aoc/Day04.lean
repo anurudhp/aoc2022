@@ -1,21 +1,14 @@
 import Aoc
+import Aoc.Lib.List
 
 abbrev Elf := Nat × Nat
 abbrev ElfPair := Elf × Elf
 
-def first2 [Inhabited α] (l : List α) : α × α := Option.get! $
-  match l with
-  | [x, y] => some (x, y)
-  | _ => none
-
 def mkElf (s : String) : Elf :=
-  s.splitOn "-" |>.map String.toNat! |> first2
+  s.splitOn "-" |>.map String.toNat! |>.first2!
 
 def mkInput (s : String) : ElfPair :=
-  s.splitOn "," |> .map mkElf |> first2
-
-def count (p : ElfPair → Bool) : List ElfPair → Nat :=
-  .filter p :> List.length
+  s.splitOn "," |>.map mkElf |>.first2!
 
 -- part1
 def Elf.contains : Elf → Elf → Bool
@@ -30,4 +23,4 @@ def overlap : ElfPair → Bool
 
 def main : IO Unit := IO.interact $ λ input =>
   let elves := input |> lines |>.map mkInput
-  s!"{count fullOverlap elves}, {count overlap elves}"
+  s!"{elves.count fullOverlap}, {elves.count overlap}"
