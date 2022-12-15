@@ -1,0 +1,1 @@
+def Prod.swap : Prod α β → Prod β α | (a, b) => (b, a)

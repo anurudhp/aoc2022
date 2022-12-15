@@ -1,11 +1,12 @@
 import Aoc
 import Aoc.Lib.List
+import Aoc.Lib.Prod
 import Aoc.Lib.Mergesort
 
 abbrev Pos := Int × Int
 abbrev Reading := Pos × Pos
 
-def parse (s : String) : Reading :=
+def parseReading (s : String) : Reading :=
   s.splitOn ":"
   |>.map (λ w => w.splitOn "x="
                 |>.get! 1
@@ -22,34 +23,58 @@ abbrev Range := Int × Int
 instance : Ord Range where
   compare | (l₁, r₁), (l₂, r₂) => if l₁ == l₂ then compare r₁ r₂ else compare l₁ l₂ 
 
-def Range.intersect? : Range → Range → Bool
+def Range.length : Range → Nat
+| (l, r) => (r - l + 1).toNat
+
+def Range.intersectsWith : Range → Range → Bool
 | (l₁, r₁), (l₂, r₂) => l₁ ≤ r₂ && l₂ ≤ r₁
 
-def totalLength (l : List Range) : Nat := flip Option.getD 0 do
+def Range.intersect : Range → Range → Range
+| (l₁, r₁), (l₂, r₂) => (max l₁ l₂, min r₁ r₂)
+
+def List.compress (l : List Range) : List Range := Id.run do
   let l := l.mergeSort
-  let mut p ← l.head?
-  let mut len := 0
+  let mut p := l.head!
+  let mut res := []
   for q in l.drop 1 do
-    if p.intersect? q then
+    if p.intersectsWith q then
       p := (p.fst, max p.snd q.snd)
     else
-      len := len + (p.snd - p.fst + 1).natAbs
+      res := p :: res
       p := q
-  len := len + (p.snd - p.fst + 1).natAbs
-  return len
+  res := p :: res
+  return res.reverse
+
+def List.blockedInCol (readings: List Reading) (col: Nat) : List Range := readings
+  |>.map (λ r@((Sx, Sy), _) =>
+    let d := dist r - (Sy - col).natAbs
+    (Sx - d, Sx + d))
+  |>.filter (λ (l, r) => l <= r)
+  |>.compress
+
+def totalLength (l : List Range) : Nat := l |>.map Range.length |>.foldl .add 0
+
+def beaconsInCol (readings: List Reading) (col: Nat) : Nat := readings
+  |>.map Prod.snd
+  |>.filter (λ (_, By) => By == col)
+  |>.eraseDups
+  |>.length
 
 def main : IO Unit := IO.interact $ λ input =>
-  let readings := lines input |>.map parse
+  let rs := lines input |>.map parseReading
 
   -- part 1
-  let Ty := 2000000
-  let invLen :=
-    readings.map (λ r@((Sx, Sy), _) =>
-      let d := dist r - (Sy - Ty).natAbs
-      (Sx - d, Sx + d))
-    |>.filter (λ (l, r) => l <= r)
-    |> totalLength
-  let beacs := readings.map Prod.snd |>.filter (λ (_, By) => By == Ty) |>.eraseDups |>.length
-  let part1 := invLen - beacs
+  let ty := 2000000
+  let blocked := totalLength (rs.blockedInCol ty) - beaconsInCol rs ty
 
-  s!"{part1}"
+  -- part 2
+  let N := 4000000
+  let get (rs : List Reading) := List.range (N + 1)
+    |>.find? (λ y => N + 1 > totalLength (rs.blockedInCol y |>.map (.intersect (0, N))))
+    |>.get!
+
+  let y := get rs
+  let x := get (rs.map (Prod.map Prod.swap Prod.swap))
+  let tuningFreq := x * N + y
+
+  s!"{blocked}, {tuningFreq}"
