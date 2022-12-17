@@ -10,20 +10,21 @@ abbrev Mask := Nat
 def List.toMask (l : List Nat) : Mask :=
   l.map (1 <<< ·) |>.foldl (· ||| ·) 0
 
-def Mask.test (n i : Mask) : Bool := (n >>> i) &&& 1 != 0
-def Mask.set (n i : Mask) : Mask := n ||| (1 <<< i)
+def Mask.test (n : Mask) (i : Nat) : Bool := (n >>> i) &&& 1 != 0
+def Mask.set  (n : Mask) (i : Nat) : Mask := n ||| (1 <<< i)
+def Mask.flip (n : Mask) (i : Nat) : Mask := n ^^^ (1 <<< i)
 
 -- valves
 inductive Valve := | V (name : Nat) (rate : Nat) (tunnels : List Nat) deriving Inhabited
 
 def parseInput (input : String) : Array Valve × Nat := Id.run do
   let input := lines input
-  let N := input.length
+  let n := input.length
 
   let mut ixs := []
   let mut ls := []
 
-  let mut (lix, rix) := (1, N - 1)
+  let mut (lix, rix) := (0, n - 1)
   for s in input do
     let s := s.splitOn "Valve " |>.get! 1
     let (name, s) := s.splitOn " has flow rate=" |>.first2!
@@ -44,11 +45,11 @@ def parseInput (input : String) : Array Valve × Nat := Id.run do
 
     ls := (name, rate, tunnels) :: ls
       
-  let mut valves := Array.mkArray N default
+  let mut valves := Array.mkArray n default
   for (name, rate, tunnels) in ls do
     let name := ixs.lookup name |>.get!
     let tunnels := tunnels.map (ixs.lookup · |>.get!)
-    valves := valves.set! name (Valve.V name rate tunnels)
+    valves := valves.set! name (.V name rate tunnels)
   return (valves, ixs.lookup "AA" |>.get!)
 
 instance : ToString Valve where
@@ -89,14 +90,16 @@ def FloydWarshall (valves : Array Valve) : Array2D Nat? := Id.run do
 
 -- memoization
 abbrev Memo := Array Nat?
--- dp[15][1 << 15][30]
---    4     15     5  bits
+def M := 15
+def logM := 4
+-- dp[M][1 << M][30]
+--    4    15     5  bits
 abbrev Ix := Nat
 
-def Ix.node : Ix → Nat  | i => i >>> 19
-def Ix.mask : Ix → Mask | i => i >>> 5 &&& ((1 <<< 15) - 1)
-def Ix.time : Ix → Nat  | i => i &&& 31
-def Ix.mk : Nat → Mask → Nat → Ix | u, m, t => (u <<< 19) ||| (m <<< 5) ||| t
+def Ix.node : Ix → Nat  | i => i >>> 20
+def Ix.mask : Ix → Mask | i => (i >>> 5) &&& ((1 <<< 15) - 1)
+def Ix.time : Ix → Nat  | i => (i &&& 31)
+def Ix.mk : Nat → Mask → Nat → Ix | u, m, t => (u <<< 20) ||| (m <<< 5) ||| t
 
 def dfs (valves : Array Valve) (δ : Array2D Nat?) (M : Nat)
         (memo : Memo) (u : Nat) (mask : Mask)
@@ -104,44 +107,45 @@ def dfs (valves : Array Valve) (δ : Array2D Nat?) (M : Nat)
 | 0 => memo
 | t+1 => Id.run do
   let ix := Ix.mk u mask (t + 1)
-  if memo[ix]?.isSome then
+  if memo[ix]!.isSome then
     return memo
   let mut memo := memo
-  let mask := mask ^^^ (1 <<< u)
+  let mask := mask.flip u
 
   let mut res := 0
   for v in [:M] do
     if not $ mask.test v then continue
     if let some d := δ[u]![v]! then
-      have : t - d < t + 1 := by sorry
-      memo := dfs valves δ M memo v mask (t - d)
-      res := max res $ memo[Ix.mk v mask (t - d)]!.getD 0
+      if t - d <= 1 then continue
+      let ix' := Ix.mk v mask (t - d)
+      if memo[ix']!.isNone then
+        have : t - d < t + 1 := by sorry
+        memo := dfs valves δ M memo v mask (t - d)
+      res := max res $ memo[ix']!.getD 0
   res := res + t * valves[u]!.rate
   memo.set! ix res
 termination_by _ _ _ _ _ _ t => t
 
 def main : IO Unit := IO.interact $ λ input =>
   let (valves, src) := parseInput input
-  let N := valves.size
-  let M := valves.count (·.rate > 0) -- [0..M-1]
+  let n := valves.size
+  let m := valves.count (·.rate > 0) -- [0..m-1]
   let δ := FloydWarshall valves
 
-  let (best1, best2) := Id.run do
+  Id.run do
     let mut memo : Memo := .mkArray (1 <<< 24) none
     let mut best1 := 0
-    let mut bestM2 := Array.mkArray (1 <<< M) 0
-    for u in [:M] do
+    let mut bestM2 := Array.mkArray (1 <<< m) 0
+    for u in [:m] do
       if let some d := δ[src]![u]! then
-        for mask in [:1 <<< M] do
-          let mask := mask ||| (1 <<< u)
+        for mask in [: 1 <<< m] do
+          let mask := .set mask u
           for st in [30, 26] do
-            memo := dfs valves δ M memo u mask (st - d)
+            memo := dfs valves δ m memo u mask (st - d)
           best1 := max best1 $ memo[Ix.mk u mask (30 - d)]!.getD 0
           bestM2 := bestM2.upd! mask (max $ memo[Ix.mk u mask (26 - d)]!.getD 0)
     
     let mut best2 := 0
-    for mask in [: 1 <<< M] do
-      best2 := max best2 $ bestM2[mask]! + bestM2[(1 <<< M) - 1 - mask]!
-    (best1, best2)
-
-  s!"{best1}, {best2}"
+    for mask in [: 1 <<< m] do
+      best2 := max best2 $ bestM2[mask]! + bestM2[(1 <<< m) - 1 - mask]!
+    s!"{best1}, {best2}"
