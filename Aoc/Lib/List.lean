@@ -7,7 +7,7 @@ def List.splitAt (n : Nat) (l : List α) : List α × List α := go l n #[] wher
   | x :: xs, n+1, acc => go xs n (acc.push x)
   | xs, _, acc => (acc.toList, xs)
 
-def List.splitOn (pred : α -> Bool) (l: List α) : List (List α) := go l where
+def List.splitOn (pred : α → Bool) (l: List α) : List (List α) := go l where
   go : List α → List (List α)
   | [] => [[]]
   | x::xs =>

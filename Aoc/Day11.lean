@@ -76,8 +76,7 @@ def runRound (relax : Bool) (mod : Nat) (monkeys : Array Monkey) : Array Monkey 
   for ix in [:n] do
     let m := ms.get! ix
     for it in m.items do
-      let it := m.inspect it
-      let it := if relax then it.div 3 else it.mod mod
+      let it := it |> m.inspect |> ite relax (·.div 3) (·.mod mod) 
       let targ := it |> m.test
       ms := ms.upd! targ (.add it)
     ms := ms.upd! ix .clear
