@@ -31,3 +31,4 @@ lean_exe day14 { root := `Aoc.Day14 }
 lean_exe day15 { root := `Aoc.Day15 }
 lean_exe day16 { root := `Aoc.Day16 }
 lean_exe day17 { root := `Aoc.Day17 }
+lean_exe day18 { root := `Aoc.Day18 }
