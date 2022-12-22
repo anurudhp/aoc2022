@@ -3,10 +3,6 @@ import Aoc.Lib.List
 
 abbrev Pos3 := Nat × Nat × Nat
 
-def List.first3! : List Nat → Pos3
-| [x, y, z] => (x, y, z)
-| _ => (0, 0, 0)
-
 def List.sum (l : List Nat) : Nat := l.foldl .add 0
 
 def Pos3.neighbours : Pos3 → List Pos3 
