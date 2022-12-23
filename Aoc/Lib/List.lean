@@ -78,3 +78,5 @@ def List.first3! [Inhabited α] : List α → α × α × α
 | _ => panic "List.first3!: list does not contain 3 elements"
 
 def List.count (p : α → Bool) : List α → Nat := (·.filter p |>.length)
+
+def List.mapJoin (f : α → List β) (l : List α) : List β := l.map f |>.join

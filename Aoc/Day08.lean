@@ -6,8 +6,6 @@ abbrev Cell := Nat × Nat
 abbrev Row := List Cell
 abbrev Grid := List Row
 
-def List.mapJoin (f : α → List β) (g : List α) : List β := g.map f |>.join
-
 -- part 1
 def checkRow (lim : Nat) : Row → List Nat
 | [] => []
