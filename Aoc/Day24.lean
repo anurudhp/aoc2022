@@ -1,6 +1,5 @@
 import Aoc
 import Aoc.Lib.Nat
-import Aoc.Lib.Queue
 
 def bfs (grid : Array (Array Char))
   (src : Nat × Nat × Nat) (dst : Nat × Nat) : Nat := Id.run do
