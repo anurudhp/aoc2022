@@ -84,9 +84,12 @@ def Grid.move (g : Grid) : Pos → Move → Pos
 | p, .Walk n => n.repeat g.walk p
 | (x, y, d), rot => (x, y, d.rotate rot)
 
-instance : ToString Move where toString | .Walk n => s!"{n}" | .L => "L" | .R => "R"
+instance : ToString Move where toString | .Walk n => s!"(Walk {n})" | .L => "(Turn L)" | .R => "(Turn R)"
 instance : ToString Dir where toString | .Right => ">" | .Down => "v" | .Left => "<" | .Up => "^"
-def main : IO Unit := IO.interact $ λ input =>
+
+-- def main : IO Unit := IO.interact $ λ input =>
+def main : IO Unit := do
+  let input ← IO.readInput 10000000
   let input := lines input |>.reverse
   let moves : Array Move := mkMoves input.head!
   
@@ -99,17 +102,4 @@ def main : IO Unit := IO.interact $ λ input =>
 
   let src := (1, grid[1]!.firstIdx (· == '.'), .Right)
   let dst := moves.foldl grid.move src
-  let allmoves := moves
-    |>.foldl (λ ps m => ps.push <| grid.move ps.back m) #[src]
-    |>.map (λ (x, y, d) => grid.upd! x (λ (s : String) => s.set ⟨y⟩ <| (toString d).back))
-    |>.map (λ g => unlines g.data)
-    |>.data
-    |> String.intercalate "\n---------------------------------------\n"
-  s!"{dst.toPasswd}
-{dst}
-{allmoves}
-  "
-  /-
-{moves}
-{unlines grid.data}
-  -/
+  IO.println s!"{dst.toPasswd}"
