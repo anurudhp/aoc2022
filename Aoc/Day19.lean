@@ -46,7 +46,7 @@ def Blueprint.maxGeodes (bp : Blueprint) (time : Nat) : Nat := go #[0, 0, 0] #[1
       let mut best := 0
       for i in [:4] do
         let i := 3 - i
-        if (i == 3 || robots[i]! < max_robots[i]!) then 
+        if (i == 3 || robots[i]! < max_robots[i]!) && (T > 2 || i == 3) then 
           let wait := reqs[i]!
             |>.zipWith res .sub
             |>.zipWith robots .ceil
@@ -68,6 +68,12 @@ def Blueprint.quality : Blueprint → Nat | bp@(.B ix _) => ix * bp.maxGeodes 24
 def main : IO Unit := IO.interact $ λ input =>
   let blueprints := lines input |>.map Blueprint.mk
 
-  let totalQuality := blueprints.map (·.quality) |>.foldl .add 0
+  let totalQuality := blueprints
+    |>.map (·.quality)
+    |>.foldl .add 0
+  let prod := blueprints
+    |>.take 3
+    |>.map (·.maxGeodes 32)
+    |>.foldl .mul 1
 
-  s!"{totalQuality}"
+  s!"{totalQuality}, {prod}"
