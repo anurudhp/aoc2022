@@ -7,3 +7,7 @@ Source files: `Aoc/Day<N>.lean`
 
 - Build: `lake build day<N>`
 - Run: `./build/bin/day<N>`
+
+If you are interested in learning lean4: [Official Docs](https://leanprover.github.io/documentation/).
+
+One final TODO: rewrite all partial functions as total functions!
