@@ -6,9 +6,6 @@ inductive Blueprint :=
     (reqs : Array <| Array Nat)
 deriving Inhabited
 
-instance : ToString Blueprint where
-  toString : Blueprint → String | .B ix reqs => s!"⟦#{ix}: {reqs}⟧"
-
 def Blueprint.mk (s: String) : Blueprint :=
   match words <| s.replace ":" "" with
   | [ "Blueprint", ix
@@ -42,26 +39,27 @@ def Blueprint.maxGeodes (bp : Blueprint) (time : Nat) : Nat := go #[0, 0, 0] #[1
     go (res robots : Array Nat) : Nat → Nat 
     | 0 => 0
     | 1 => 0
-    | T+1 => Id.run do
-      let mut best := 0
-      for i in [:4] do
-        let i := 3 - i
+    | T+1 => List.foldl max 0 <| [3, 2, 1, 0].map (λ i => 
         if (i == 3 || robots[i]! < max_robots[i]!) && (T > 2 || i == 3) then 
           let wait := reqs[i]!
             |>.zipWith res .sub
             |>.zipWith robots .ceil
             |>.foldl max 0
-          if wait ≥ T then continue
-          if wait + 1 == T then
-            if i == 3 then best := max best 1
-            continue
-          let res := res
-            |>.zipWith robots (· + · * wait)
-            |>.zipWith reqs[i]! .sub
-            |>.zipWith robots .add
-          let robots := if i < 3 then robots.upd! i (· + 1) else robots
-          best := max best <| (if i == 3 then (T - wait) else 0) + go res robots (T - wait)
-      best
+          if wait < T then
+            if wait + 1 == T then
+              if i == 3 then 1 else 0
+            else
+              let res' := res
+                |>.zipWith robots (· + · * wait)
+                |>.zipWith reqs[i]! .sub
+                |>.zipWith robots .add
+              let robots' := if i < 3 then robots.upd! i (· + 1) else robots
+              have : T - wait < T + 1 := by sorry
+              (if i == 3 then (T - wait) else 0) + go res' robots' (T - wait) 
+          else 0
+        else 0
+      )
+    -- termination_by _ _ T => T
         
 def Blueprint.quality : Blueprint → Nat | bp@(.B ix _) => ix * bp.maxGeodes 24
 
