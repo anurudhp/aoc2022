@@ -35,7 +35,7 @@ def bfs (grid : Grid) (s e : Pos) : Nat := Option.get! do
     if y > 0     then res := (x, y - 1) :: res
     if x + 1 < n then res := (x + 1, y) :: res
     if y + 1 < m then res := (x, y + 1) :: res
-    res.filter (λ v => grid.at v <= grid.at u + 1)
+    res.filter (grid.at · <= grid.at u + 1)
 
   let mut q := Queue.empty.enqueue (s, 0)
   let mut seen := [s]
@@ -46,7 +46,7 @@ def bfs (grid : Grid) (s e : Pos) : Nat := Option.get! do
     if u == e then return d
 
     for v in neigh u do
-      if not $ seen.elem v then
+      if not <| seen.elem v then
         q := q.enqueue (v, d + 1)
         seen := v :: seen
   none
