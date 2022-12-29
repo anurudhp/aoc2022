@@ -11,14 +11,12 @@ def Message.mixₚ (xs : Message) (p : Nat) : Message := Option.get! do
 
 def Message.mix (xs : Message) : Message := List.range xs.size |>.foldl .mixₚ xs
 
-def Message.decrypt (rounds : Nat) (xs : Message) : Int := Id.run do
-  let mut xs := xs
-  for _ in [:rounds] do xs := xs.mix
-  let xs' := xs.map (·.fst)
-  let ix₀ := xs'.getIdx? 0 |>.get!
+def Message.decrypt (rounds : Nat) (xs : Message) : Int :=
+  let xs := rounds.repeat .mix xs |>.map (·.fst)
+  let ix₀ := xs.getIdx? 0 |>.get!
   [1000, 2000, 3000]
-    |>.map (· + ix₀ |>.mod xs.size |> xs'.get!)
-    |>.foldl Int.add 0
+    |>.map (· + ix₀ |>.mod xs.size |> xs.get!)
+    |>.foldl .add 0
 
 def main : IO Unit := IO.interact $ λ input =>
   let xs := lines input |>.map String.toInt!
